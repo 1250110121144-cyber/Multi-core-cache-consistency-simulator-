@@ -1,0 +1,6 @@
+{
+  "name": "Multi-Core Cache Consistency Simulator",
+  "description": "An interactive educational visualization of the MESI cache coherence protocol with multi-core cache state transitions, shared bus communication, and live performance statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

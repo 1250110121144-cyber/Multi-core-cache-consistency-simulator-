@@ -1,0 +1,315 @@
+/* ==========================================================================
+   MULTI-CORE CACHE CONSISTENCY SIMULATOR
+   Clean, Minimal Student Laboratory Design
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0b1329; /* Dark navy */
+  color: #e2e8f0;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 1.5rem 1rem;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+h1 {
+  font-size: 1.85rem;
+  color: #38bdf8; /* Blue */
+  margin-bottom: 0.35rem;
+}
+
+.subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+/* Message / Notification Alert */
+.status-msg {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #34d399;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+  display: block;
+}
+
+.status-msg.hidden {
+  display: none;
+}
+
+/* 3 Main Display Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #131d38;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.card.core-card {
+  border-top: 3px solid #38bdf8;
+}
+
+.card.memory-card {
+  border-top: 3px solid #10b981;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.card.core-card .card-title {
+  color: #38bdf8;
+}
+
+.card.memory-card .card-title {
+  color: #10b981;
+}
+
+.card-info-item {
+  margin-bottom: 0.75rem;
+}
+
+.card-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.card-label {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.card-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f8fafc;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.card-value.invalid {
+  color: #ef4444;
+}
+
+/* MESI Badges */
+.state-badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.state-badge.state-m {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid #f59e0b;
+}
+
+.state-badge.state-e {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+}
+
+.state-badge.state-s {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid #38bdf8;
+}
+
+.state-badge.state-i {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid #ef4444;
+}
+
+/* Simulation Controls Section */
+.controls-panel {
+  background: #131d38;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.section-heading {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.input-label {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.number-input {
+  background: #0b1329;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  width: 120px;
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.btn {
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, opacity 0.15s ease;
+  text-align: center;
+}
+
+.btn-read {
+  background: #1d4ed8; /* Blue */
+  color: white;
+}
+
+.btn-read:hover {
+  background: #2563eb;
+}
+
+.btn-write {
+  background: #047857; /* Green */
+  color: white;
+}
+
+.btn-write:hover {
+  background: #059669;
+}
+
+.btn-reset {
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+}
+
+.btn-reset:hover {
+  background: #475569;
+}
+
+/* Operation History Section */
+.history-panel {
+  background: #131d38;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.history-list {
+  list-style: none;
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  background: #0b1329;
+  border-left: 3px solid #38bdf8;
+  padding: 0.65rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  color: #cbd5e1;
+}
+
+.history-item.write-op {
+  border-left-color: #10b981;
+}
+
+.history-item.invalid-op {
+  border-left-color: #ef4444;
+}
+
+.history-item:first-child {
+  background: #172554;
+}
+
+.empty-history-text {
+  color: #64748b;
+  font-size: 0.88rem;
+  font-style: italic;
+  padding: 0.5rem 0;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
